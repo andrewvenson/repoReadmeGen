@@ -14,20 +14,35 @@ inquirer
     },
     {
       name: "repo",
-      message: "Name of Repo: ",
-      type: "input",
-    },
-    {
-      name: "description",
-      message: "Description: ",
-      type: "input",
-    },
-    {
-      name: "installation",
-      message: "Installation: ",
-      type: "input",
+      message: "Choose one: ",
+      choices: function () {
+        return [
+          "Create a new repo with Readme",
+          "Re-create existing repo's Readme",
+        ];
+      },
+      type: "list",
     },
   ])
+  .then((answers) => {
+    if (answers.repo === "Create a new repo with Readme") {
+      return inquirer.prommpt([
+        {
+          name: "repoName",
+          message: "Enter new repo name: ",
+          type: "input",
+        },
+      ]);
+    } else {
+      return inquirer.prompt([
+        {
+          name: "repoName",
+          message: "Enter existing repo name: ",
+          type: "input",
+        },
+      ]);
+    }
+  })
   .then((answers) => {
     // Use user feedback for... whatever!!
   });
