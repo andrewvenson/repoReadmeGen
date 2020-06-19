@@ -2,6 +2,7 @@ var inquirer = require("inquirer");
 var github = require("octonode");
 
 var authenticated = false;
+var gitClient;
 
 let main = async function () {
   let { username, password } = await inquirer.prompt([
@@ -21,20 +22,44 @@ let main = async function () {
     username: username,
     password: password,
   });
-  asyncClient(client);
+
+  gitClient = client;
+
+  setAuthentication(gitClient);
 };
 
-function asyncClient(client) {
+// set authentication
+function setAuthentication(client) {
   client.get("/user", {}, function (err, status, body, headers) {
     if (!err) {
       authenticated = true;
       console.log("authenticated");
+      initialPrompts();
     } else {
       authenticated = false;
       console.log("Invalid credentials");
       main();
     }
   });
+}
+
+// modify existing repo or create new repo with readme
+function initialPrompts() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "create",
+        choices: [
+          "Create new Repo with Readme",
+          "Modify Existing Repo's Readme",
+        ],
+        message: "Choose: ",
+      },
+    ])
+    .then((answers) => {
+      console.log(answers.create);
+    });
 }
 
 main();
