@@ -191,13 +191,13 @@ function final() {
 
   ## Installation
   
-  ##Usage
+  ## Usage
 
-  ##License
+  ## License
 
-  ##Contributing
+  ## Contributing
 
-  ##Tests
+  ## Tests
   
   `;
 
