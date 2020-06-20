@@ -1,11 +1,16 @@
 var inquirer = require("inquirer");
 var github = require("octonode");
+var fs = require("fs");
 
 var authenticated = false;
 var gitClient;
 var readmeObj = {
-  toc: ["Installation", "Usage", "License", "Contributing", "Tests"],
+  reponame: "",
+  description: "",
   installstep: [],
+  usage: [],
+  contributing: [],
+  license: "",
 };
 
 let main = async function () {
@@ -97,7 +102,7 @@ function newRepoPrompts() {
       if (answers.installation === "Yes") {
         installationSteps();
       } else {
-        console.log("go to usage");
+        usage();
       }
     });
 }
@@ -109,23 +114,22 @@ function installationSteps() {
         name: "installationstep",
         type: "list",
         message: "Step type: ",
-        choices: ["Add installation step", "Add installation code snippet"],
+        choices: ["Text", "Code"],
       },
     ])
     .then((answers) => {
-      if (answers.installationstep === "Add installation step") {
+      if (answers.installationstep === "Text") {
         inquirer
           .prompt([
             {
               name: "installstep",
               type: "input",
-              message: "Enter step: ",
+              message: "Enter text: ",
             },
             {
               name: "continue",
               type: "list",
-              message:
-                "Would you like to continue adding to installation steps?",
+              message: "More installation steps?",
               choices: ["Yes", "No"],
             },
           ])
@@ -145,13 +149,12 @@ function installationSteps() {
             {
               name: "codestep",
               type: "input",
-              message: "Enter step: ",
+              message: "Enter code: ",
             },
             {
               name: "continue",
               type: "list",
-              message:
-                "Would you like to continue adding to installation steps?",
+              message: "More installation steps?",
               choices: ["Yes", "No"],
             },
           ])
@@ -169,8 +172,42 @@ function installationSteps() {
 }
 
 function usage() {
-  console.log(readmeObj);
-  console.log("adding usage");
+  final();
+}
+
+function contrib() {}
+
+function final() {
+  var readme = `    
+  # ${readmeObj.reponame}
+  
+  ${readmeObj.description}
+
+  1. [Installation](#installation)
+  2. [Usage](#usage)
+  3. [License](#license)
+  4. [Contributing](#contributing)
+  5. [Tests](#tests)
+
+  ## Installation
+  
+  ##Usage
+
+  ##License
+
+  ##Contributing
+
+  ##Tests
+  
+  `;
+
+  fs.writeFile("README.md", readme, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("successful");
+    }
+  });
 }
 
 main();
