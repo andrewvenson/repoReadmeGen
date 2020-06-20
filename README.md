@@ -1,6 +1,6 @@
-# RepoReadmeGenerator
+# TestRepo
   
-This command line interface allows you to generate a readme & create a repo at the same time to push readme to
+This is a test repo description
 
 
 ## Table of Contents
@@ -41,6 +41,11 @@ MIT
 ## Badges
 
 ## Contributing
+[//]: contributor-faces
+<a href="https://github.com/andrewvenson"><img src="https://avatars0.githubusercontent.com/u/14009158?v=4" title="andrewvenson" width="80" height="80"></a>
+          
+
+
 
 ## Tests
 

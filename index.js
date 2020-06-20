@@ -179,7 +179,7 @@ function usage() {
       {
         name: "continue",
         type: "list",
-        message: "Add Usage code?",
+        message: "More Usage code?",
         choices: ["Yes", "No"],
       },
     ])
@@ -220,7 +220,53 @@ function license() {
 }
 
 function contrib() {
-  final();
+  inquirer
+    .prompt([
+      {
+        name: "contrib",
+        type: "input",
+        message: "Contributer - Github username: ",
+      },
+      {
+        name: "contribagain",
+        type: "list",
+        message: "Add another contributer?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answers) => {
+      var ghuser = gitClient.user(answers.contrib);
+      ghuser.info((err, data, headers) => {
+        if (err) {
+          console.log("invalid github username | please enter again");
+          contrib();
+        } else {
+          readmeObj.contributing
+            .push(`<a href="https://github.com/${answers.contrib}"><img src="${data.avatar_url}" title="${answers.contrib}" width="80" height="80"></a>
+          `);
+        }
+      });
+      if (answers.contribagain === "Yes") {
+        contrib();
+      } else {
+        inquirer
+          .prompt([
+            {
+              name: "badges",
+              type: "list",
+              message: "Would you like to add any badges?",
+              choices: ["Yes", "No"],
+            },
+          ])
+          .then((answers) => {
+            if (answers.badge === "Yes") {
+              badges();
+            } else {
+              tests();
+            }
+          });
+      }
+    });
 }
 
 function badges() {
@@ -274,6 +320,12 @@ ${readmeObj.license}
 ## Badges
 
 ## Contributing
+${readmeObj.contributing
+  .map((contributer) => {
+    return "[//]: contributor-faces\n" + contributer + "\n";
+  })
+  .join("")}
+
 
 ## Tests
 
