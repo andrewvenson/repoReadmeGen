@@ -12,6 +12,8 @@ var readmeObj = {
   contributing: [],
   license: "",
   codeusage: [],
+  tests: [],
+  badges: [],
 };
 
 let main = async function () {
@@ -172,12 +174,12 @@ function usage() {
       {
         name: "codeline",
         type: "input",
-        message: "Enter code line: ",
+        message: "Enter code: ",
       },
       {
         name: "continue",
         type: "list",
-        message: "Add Usage step?",
+        message: "Add Usage code?",
         choices: ["Yes", "No"],
       },
     ])
@@ -200,9 +202,20 @@ function license() {
         message: "Enter License: ",
         type: "input",
       },
+      {
+        name: "contrib",
+        message: "Would you like to add any contributers?",
+        type: "list",
+        choices: ["Yes", "No"],
+      },
     ])
     .then((answers) => {
       readmeObj.license = answers.license;
+      if (answers.contrib === "Yes") {
+        contrib();
+      } else {
+        badges();
+      }
     });
 }
 
@@ -210,7 +223,11 @@ function contrib() {
   final();
 }
 
-function contrib() {
+function badges() {
+  final();
+}
+
+function tests() {
   final();
 }
 
@@ -254,9 +271,14 @@ ${"```"}
 
 ${readmeObj.license}
 
+## Badges
+
 ## Contributing
 
-## Tests`;
+## Tests
+
+
+`;
 
   fs.writeFile("README.md", readme, (err) => {
     if (err) {

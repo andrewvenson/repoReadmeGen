@@ -1,32 +1,47 @@
-# Test
+# RepoReadmeGenerator
   
-  This is a test description
+This command line interface allows you to generate a readme & create a repo at the same time to push readme to
 
-1. [Installation](#installation)
-2. [Usage](#usage)
-3. [License](#license)
-4. [Contributing](#contributing)
-5. [Tests](#tests)
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Contributing](#contributing)
+- [Tests](#tests)
 
 ## Installation
-  Clone project to your local directory and then install dependencies like so:
 
-```bash
-npm install requireddependencies
-```
-
-Once installed, Install octonode like so:
+Install octonode
 
 ```bash
 npm install octonode
+```
+
+Install inquirer
+
+```bash
+npm install inquirer
 ```
 
 
   
 ## Usage
 
+```
+node .
+
+```
+
 ## License
+
+MIT
+
+## Badges
 
 ## Contributing
 
 ## Tests
+
+
