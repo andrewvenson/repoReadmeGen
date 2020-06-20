@@ -307,8 +307,7 @@ function final() {
     ])
     .then((answers) => {
       if (answers.correct === "Yes") {
-        console.log("Great, Creating readme now");
-        createReadme();
+        readmeLocation();
       } else {
         inquirer
           .prompt([
@@ -331,15 +330,36 @@ function final() {
               readmeObj.codeusage = [];
               newRepoPrompts();
             } else {
-              console.log("Great, Creating readme now");
-              createReadme();
+              readmeLocation();
             }
           });
       }
     });
 }
 
-function createReadme() {
+function readmeLocation() {
+  inquirer
+    .prompt([
+      {
+        name: "location",
+        type: "list",
+        message: "Where would you like to write your README.md",
+        choices: [
+          "Just write it locally",
+          `Create a new REPO named <${readmeObj.reponame}> with current README data`,
+        ],
+      },
+    ])
+    .then((answers) => {
+      if (answers.location === "Just write it locally") {
+        createReadme("local");
+      } else {
+        createReadme("github");
+      }
+    });
+}
+
+function createReadme(location) {
   var readme = `# ${readmeObj.reponame}
   
 ${readmeObj.description}
@@ -408,9 +428,47 @@ ${"```"}
     if (err) {
       console.log(err);
     } else {
-      console.log("README created successfully");
+      console.log("README.md created successfully");
     }
   });
+
+  if (location === "github") {
+    let ghme = gitClient.me();
+
+    ghme.repo(
+      {
+        name: readmeObj.reponame,
+        description: readmeObj.description,
+      },
+      (err, data, headers) => {
+        if (err) {
+          console.log("there was an error creating your repo");
+        } else {
+          console.log(`REPO: <${readmeObj.reponame}> created successfully`);
+
+          var ghrepo = gitClient.repo(
+            `${gitClient.token.username}/${readmeObj.reponame}`
+          );
+          ghrepo.createContents(
+            "README.md",
+            "initial creation of readme",
+            readme,
+            (err, data, headers) => {
+              if (err) {
+                console.log(
+                  `There was an error commiting your REAME.md to the REPO: <${readmeObj.reponame}>`
+                );
+              } else {
+                console.log(
+                  `README successfully commited to REPO: <${readmeObj.reponame}>`
+                );
+              }
+            }
+          );
+        }
+      }
+    );
+  }
 }
 
 main();
