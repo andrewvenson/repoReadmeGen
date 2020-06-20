@@ -11,6 +11,7 @@ var readmeObj = {
   usage: [],
   contributing: [],
   license: "",
+  codeusage: [],
 };
 
 let main = async function () {
@@ -43,7 +44,7 @@ function setAuthentication(client) {
     if (!err) {
       authenticated = true;
       console.log("authenticated");
-      initialPrompts();
+      newRepoPrompts();
     } else {
       authenticated = false;
       console.log("Invalid credentials");
@@ -53,27 +54,6 @@ function setAuthentication(client) {
 }
 
 // modify existing repo or create new repo with readme
-function initialPrompts() {
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "create",
-        choices: [
-          "Create new Repo with Readme",
-          "Modify Existing Repo's Readme",
-        ],
-        message: "Choose: ",
-      },
-    ])
-    .then((answers) => {
-      if (answers.create === "Create new Repo with Readme") {
-        newRepoPrompts();
-      } else {
-        console.log("modifying existing readme");
-      }
-    });
-}
 
 function newRepoPrompts() {
   inquirer
@@ -154,7 +134,7 @@ function installationSteps() {
             {
               name: "continue",
               type: "list",
-              message: "More installation steps?",
+              message: "Add installation step?",
               choices: ["Yes", "No"],
             },
           ])
@@ -164,7 +144,22 @@ function installationSteps() {
               installationSteps();
             } else {
               readmeObj.installstep.push({ codestep: answer.codestep });
-              usage();
+              inquirer
+                .prompt([
+                  {
+                    name: "usageconfirm",
+                    message: "Would you like to add Usage?",
+                    type: "list",
+                    choices: ["Yes", "No"],
+                  },
+                ])
+                .then((answers) => {
+                  if (answers.usageconfirm === "Yes") {
+                    usage();
+                  } else {
+                    License();
+                  }
+                });
             }
           });
       }
@@ -172,34 +167,96 @@ function installationSteps() {
 }
 
 function usage() {
+  inquirer
+    .prompt([
+      {
+        name: "codeline",
+        type: "input",
+        message: "Enter code line: ",
+      },
+      {
+        name: "continue",
+        type: "list",
+        message: "Add Usage step?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answer) => {
+      if (answer.continue === "Yes") {
+        readmeObj.codeusage.push({ codestep: answer.codeline });
+        usage();
+      } else {
+        readmeObj.codeusage.push({ codestep: answer.codeline });
+        license();
+      }
+    });
+}
+
+function license() {
+  inquirer
+    .prompt([
+      {
+        name: "license",
+        message: "Enter License: ",
+        type: "input",
+      },
+    ])
+    .then((answers) => {
+      readmeObj.license = answers.license;
+    });
+}
+
+function contrib() {
   final();
 }
 
-function contrib() {}
+function contrib() {
+  final();
+}
 
 function final() {
-  var readme = `    
-  # ${readmeObj.reponame}
+  var readme = `# ${readmeObj.reponame}
   
-  ${readmeObj.description}
+${readmeObj.description}
 
-  1. [Installation](#installation)
-  2. [Usage](#usage)
-  3. [License](#license)
-  4. [Contributing](#contributing)
-  5. [Tests](#tests)
 
-  ## Installation
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Contributing](#contributing)
+- [Tests](#tests)
+
+## Installation
+
+${readmeObj.installstep
+  .map((step) => {
+    if (step.codestep) {
+      return "```bash\n" + step.codestep + "\n```" + "\n\n";
+    } else {
+      return step.textstep + "\n\n";
+    }
+  })
+  .join("")}
   
-  ## Usage
+## Usage
 
-  ## License
+${"```"}
+${readmeObj.codeusage
+  .map((use) => {
+    return use.codestep + "\n";
+  })
+  .join("")}
+${"```"}
 
-  ## Contributing
+## License
 
-  ## Tests
-  
-  `;
+${readmeObj.license}
+
+## Contributing
+
+## Tests`;
 
   fs.writeFile("README.md", readme, (err) => {
     if (err) {
