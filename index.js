@@ -8,13 +8,11 @@ var readmeObj = {
   reponame: "",
   description: "",
   installstep: [],
-  usage: [],
   contributing: [],
   license: "",
   codeusage: [],
   tests: [],
   badges: [],
-  tests: [],
 };
 
 let main = async function () {
@@ -323,6 +321,14 @@ function final() {
           ])
           .then((answers) => {
             if (answers.redo === "Yes") {
+              readmeObj.reponame = "";
+              readmeObj.description = "";
+              readmeObj.installstep = [];
+              readmeObj.license = "";
+              readmeObj.tests = [];
+              readmeObj.badges = [];
+              readmeObj.contributing = [];
+              readmeObj.codeusage = [];
               newRepoPrompts();
             } else {
               console.log("Great, Creating readme now");
@@ -389,7 +395,7 @@ ${readmeObj.contributing
   
 ## Tests
 ${"```"}
-${readmeObj.codeusage
+${readmeObj.tests
   .map((use) => {
     return use.codestep + "\n";
   })

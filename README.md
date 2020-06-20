@@ -1,6 +1,6 @@
 # repoReadmeGen
   
-This is a test description
+repoReadmeGen is cli to automatically generate a readme based off the data you give it.
   
 ## Table of Contents
   
@@ -12,16 +12,10 @@ This is a test description
   
 ## Installation
   
-Install Octonode dependency
+Install octonode dependency
 
 ```bash
 npm install octonode
-```
-
-Install Inquirer Dependency
-
-```bash
-npm install inquirer
 ```
 
 
@@ -29,9 +23,11 @@ npm install inquirer
 ## Usage
   
 ```
+// change insto repoReadmeGen directory
+// run the following command
 node .
 
-  ```
+```
   
 ## License
   
@@ -39,7 +35,8 @@ MIT
   
 ## Badges
   
-<img src="https://img.shields.io/badge/cool-wow-green" alt="cool" />
+<img src="https://img.shields.io/badge/thisiscool-codemonk9-green" alt="thisiscool" />
+<img src="https://img.shields.io/badge/anotherone-anotherone-black" alt="anotherone" />
 
   
 ## Contributing
@@ -50,7 +47,7 @@ MIT
   
 ## Tests
 ```
-node .
+// No test code 
 
 ```
   
