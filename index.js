@@ -14,6 +14,7 @@ var readmeObj = {
   codeusage: [],
   tests: [],
   badges: [],
+  tests: [],
 };
 
 let main = async function () {
@@ -34,9 +35,7 @@ let main = async function () {
     username: username,
     password: password,
   });
-
   gitClient = client;
-
   setAuthentication(gitClient);
 };
 
@@ -54,8 +53,6 @@ function setAuthentication(client) {
     }
   });
 }
-
-// modify existing repo or create new repo with readme
 
 function newRepoPrompts() {
   inquirer
@@ -137,7 +134,6 @@ function installationSteps() {
             if (answer.continue === "Yes") {
               installationSteps();
             } else {
-              readmeObj.installstep.push({ codestep: answer.codestep });
               usage();
             }
           });
@@ -236,19 +232,19 @@ function badges() {
         name: "label",
         type: "input",
         message: "Badge - Badge Label: ",
-        default: "<Badge Label>",
+        default: "<LABEL>",
       },
       {
         name: "message",
         type: "input",
         message: "Badge - Badge Message: ",
-        default: "<Badge Message>",
+        default: "<MESSAGE>",
       },
       {
         name: "color",
         type: "input",
         message: "Badge - Badge Color: ",
-        default: "<Badge Color>",
+        default: "<COLOR>",
       },
     ])
     .then((answers) => {
@@ -275,25 +271,83 @@ function badges() {
 }
 
 function tests() {
-  final();
+  inquirer
+    .prompt([
+      {
+        name: "codeline",
+        type: "input",
+        message: "Enter Test code: ",
+        default: "Enter Test Code Here",
+      },
+      {
+        name: "continue",
+        type: "list",
+        message: "Add another test?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answer) => {
+      readmeObj.tests.push({ codestep: answer.codeline });
+      if (answer.continue === "Yes") {
+        tests();
+      } else {
+        final();
+      }
+    });
 }
 
 function final() {
+  console.log(readmeObj);
+  inquirer
+    .prompt([
+      {
+        name: "correct",
+        type: "list",
+        message: "Does your README data look correct?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answers) => {
+      if (answers.correct === "Yes") {
+        console.log("Great, Creating readme now");
+        createReadme();
+      } else {
+        inquirer
+          .prompt([
+            {
+              name: "redo",
+              type: "list",
+              message: "Would you like to redo README?",
+              choices: ["Yes", "No"],
+            },
+          ])
+          .then((answers) => {
+            if (answers.redo === "Yes") {
+              newRepoPrompts();
+            } else {
+              console.log("Great, Creating readme now");
+              createReadme();
+            }
+          });
+      }
+    });
+}
+
+function createReadme() {
   var readme = `# ${readmeObj.reponame}
   
 ${readmeObj.description}
-
-
+  
 ## Table of Contents
-
+  
 - [Installation](#installation)
 - [Usage](#usage)
 - [License](#license)
 - [Contributing](#contributing)
 - [Tests](#tests)
-
+  
 ## Installation
-
+  
 ${readmeObj.installstep
   .map((step) => {
     if (step.codestep) {
@@ -303,9 +357,9 @@ ${readmeObj.installstep
     }
   })
   .join("")}
-  
+    
 ## Usage
-
+  
 ${"```"}
 ${readmeObj.codeusage
   .map((use) => {
@@ -313,38 +367,42 @@ ${readmeObj.codeusage
   })
   .join("")}
 ${"```"}
-
+  
 ## License
-
+  
 ${readmeObj.license}
-
+  
 ## Badges
-
+  
 ${readmeObj.badges
   .map((badge) => {
     return badge + "\n";
   })
   .join("")}
-
-
+  
 ## Contributing
 ${readmeObj.contributing
   .map((contributer) => {
     return "[//]: contributor-faces\n" + contributer + "\n";
   })
   .join("")}
-
-
+  
 ## Tests
-
-
+${"```"}
+${readmeObj.codeusage
+  .map((use) => {
+    return use.codestep + "\n";
+  })
+  .join("")}
+${"```"}
+  
 `;
 
   fs.writeFile("README.md", readme, (err) => {
     if (err) {
       console.log(err);
     } else {
-      console.log("successful");
+      console.log("README created successfully");
     }
   });
 }
