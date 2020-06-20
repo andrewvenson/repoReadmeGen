@@ -11,6 +11,10 @@ var readmeObj = {
   usage: [],
   contributing: [],
   license: "",
+  codeusage: [],
+  tests: [],
+  badges: [],
+  tests: [],
 };
 
 let main = async function () {
@@ -31,9 +35,7 @@ let main = async function () {
     username: username,
     password: password,
   });
-
   gitClient = client;
-
   setAuthentication(gitClient);
 };
 
@@ -43,36 +45,13 @@ function setAuthentication(client) {
     if (!err) {
       authenticated = true;
       console.log("authenticated");
-      initialPrompts();
+      newRepoPrompts();
     } else {
       authenticated = false;
       console.log("Invalid credentials");
       main();
     }
   });
-}
-
-// modify existing repo or create new repo with readme
-function initialPrompts() {
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "create",
-        choices: [
-          "Create new Repo with Readme",
-          "Modify Existing Repo's Readme",
-        ],
-        message: "Choose: ",
-      },
-    ])
-    .then((answers) => {
-      if (answers.create === "Create new Repo with Readme") {
-        newRepoPrompts();
-      } else {
-        console.log("modifying existing readme");
-      }
-    });
 }
 
 function newRepoPrompts() {
@@ -82,28 +61,20 @@ function newRepoPrompts() {
         name: "reponame",
         type: "input",
         message: "Repo name: ",
+        default: "Enter Repo Name Here",
       },
       {
         name: "description",
         type: "input",
         message: "Description: ",
-      },
-      {
-        name: "installation",
-        type: "list",
-        message: "Would you like to add installation steps?",
-        choices: ["Yes", "No"],
+        default: "Enter Description Here",
       },
     ])
     .then((answers) => {
       readmeObj.reponame = answers.reponame;
       readmeObj.description = answers.description;
 
-      if (answers.installation === "Yes") {
-        installationSteps();
-      } else {
-        usage();
-      }
+      installationSteps();
     });
 }
 
@@ -113,7 +84,7 @@ function installationSteps() {
       {
         name: "installationstep",
         type: "list",
-        message: "Step type: ",
+        message: "Installation steps = Choose step type: ",
         choices: ["Text", "Code"],
       },
     ])
@@ -125,6 +96,7 @@ function installationSteps() {
               name: "installstep",
               type: "input",
               message: "Enter text: ",
+              default: "Enter Installation Step Here",
             },
             {
               name: "continue",
@@ -134,36 +106,34 @@ function installationSteps() {
             },
           ])
           .then((answer) => {
+            readmeObj.installstep.push({ textstep: answer.installstep });
             if (answer.continue === "Yes") {
-              readmeObj.installstep.push({ textstep: answer.installstep });
               installationSteps();
             } else {
-              readmeObj.installstep.push({ textstep: answer.installstep });
-
               usage();
             }
           });
-      } else {
+      } else if (answers.installationstep === "Code") {
         inquirer
           .prompt([
             {
               name: "codestep",
               type: "input",
               message: "Enter code: ",
+              default: "Enter Installation Code Here",
             },
             {
               name: "continue",
               type: "list",
-              message: "More installation steps?",
+              message: "Add installation step?",
               choices: ["Yes", "No"],
             },
           ])
           .then((answer) => {
+            readmeObj.installstep.push({ codestep: answer.codestep });
             if (answer.continue === "Yes") {
-              readmeObj.installstep.push({ codestep: answer.codestep });
               installationSteps();
             } else {
-              readmeObj.installstep.push({ codestep: answer.codestep });
               usage();
             }
           });
@@ -172,40 +142,267 @@ function installationSteps() {
 }
 
 function usage() {
-  final();
+  inquirer
+    .prompt([
+      {
+        name: "codeline",
+        type: "input",
+        message: "Enter Usage code: ",
+        default: "Enter Usage Code Here",
+      },
+      {
+        name: "continue",
+        type: "list",
+        message: "More Usage code?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answer) => {
+      if (answer.continue === "Yes") {
+        readmeObj.codeusage.push({ codestep: answer.codeline });
+        usage();
+      } else {
+        readmeObj.codeusage.push({ codestep: answer.codeline });
+        license();
+      }
+    });
 }
 
-function contrib() {}
+function license() {
+  inquirer
+    .prompt([
+      {
+        name: "license",
+        message: "Enter License: ",
+        type: "input",
+        default: "Enter License Here",
+      },
+    ])
+    .then((answers) => {
+      readmeObj.license = answers.license;
+      contrib();
+    });
+}
+
+function contrib() {
+  inquirer
+    .prompt([
+      {
+        name: "contrib",
+        type: "input",
+        message: "Contributer - Github username: ",
+        default: gitClient.token.username,
+      },
+    ])
+    .then((answers) => {
+      var ghuser = gitClient.user(answers.contrib);
+      ghuser.info((err, data, headers) => {
+        if (err) {
+          console.log("invalid github username | please enter again");
+          contrib();
+        } else {
+          readmeObj.contributing
+            .push(`<a href="https://github.com/${answers.contrib}"><img src="${data.avatar_url}" title="${answers.contrib}" width="80" height="80"></a>
+          `);
+          inquirer
+            .prompt([
+              {
+                name: "contribagain",
+                type: "list",
+                message: "Add another contributer?",
+                choices: ["Yes", "No"],
+              },
+            ])
+            .then((answers) => {
+              if (answers.contribagain === "Yes") {
+                contrib();
+              } else {
+                badges();
+              }
+            });
+        }
+      });
+    });
+}
+
+function badges() {
+  inquirer
+    .prompt([
+      {
+        name: "label",
+        type: "input",
+        message: "Badge - Badge Label: ",
+        default: "<LABEL>",
+      },
+      {
+        name: "message",
+        type: "input",
+        message: "Badge - Badge Message: ",
+        default: "<MESSAGE>",
+      },
+      {
+        name: "color",
+        type: "input",
+        message: "Badge - Badge Color: ",
+        default: "<COLOR>",
+      },
+    ])
+    .then((answers) => {
+      readmeObj.badges.push(
+        `<img src="https://img.shields.io/badge/${answers.label}-${answers.message}-${answers.color}" alt="${answers.label}" />`
+      );
+      inquirer
+        .prompt([
+          {
+            name: "anotherbadge",
+            type: "list",
+            message: "Add another Badge?",
+            choices: ["Yes", "No"],
+          },
+        ])
+        .then((answers) => {
+          if (answers.anotherbadge === "Yes") {
+            badges();
+          } else {
+            tests();
+          }
+        });
+    });
+}
+
+function tests() {
+  inquirer
+    .prompt([
+      {
+        name: "codeline",
+        type: "input",
+        message: "Enter Test code: ",
+        default: "Enter Test Code Here",
+      },
+      {
+        name: "continue",
+        type: "list",
+        message: "Add another test?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answer) => {
+      readmeObj.tests.push({ codestep: answer.codeline });
+      if (answer.continue === "Yes") {
+        tests();
+      } else {
+        final();
+      }
+    });
+}
 
 function final() {
-  var readme = `    
-  # ${readmeObj.reponame}
+  console.log(readmeObj);
+  inquirer
+    .prompt([
+      {
+        name: "correct",
+        type: "list",
+        message: "Does your README data look correct?",
+        choices: ["Yes", "No"],
+      },
+    ])
+    .then((answers) => {
+      if (answers.correct === "Yes") {
+        console.log("Great, Creating readme now");
+        createReadme();
+      } else {
+        inquirer
+          .prompt([
+            {
+              name: "redo",
+              type: "list",
+              message: "Would you like to redo README?",
+              choices: ["Yes", "No"],
+            },
+          ])
+          .then((answers) => {
+            if (answers.redo === "Yes") {
+              newRepoPrompts();
+            } else {
+              console.log("Great, Creating readme now");
+              createReadme();
+            }
+          });
+      }
+    });
+}
+
+function createReadme() {
+  var readme = `# ${readmeObj.reponame}
   
-  ${readmeObj.description}
-
-  1. [Installation](#installation)
-  2. [Usage](#usage)
-  3. [License](#license)
-  4. [Contributing](#contributing)
-  5. [Tests](#tests)
-
-  ## Installation
+${readmeObj.description}
   
-  ## Usage
-
-  ## License
-
-  ## Contributing
-
-  ## Tests
+## Table of Contents
   
-  `;
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Contributing](#contributing)
+- [Tests](#tests)
+  
+## Installation
+  
+${readmeObj.installstep
+  .map((step) => {
+    if (step.codestep) {
+      return "```bash\n" + step.codestep + "\n```" + "\n\n";
+    } else {
+      return step.textstep + "\n\n";
+    }
+  })
+  .join("")}
+    
+## Usage
+  
+${"```"}
+${readmeObj.codeusage
+  .map((use) => {
+    return use.codestep + "\n";
+  })
+  .join("")}
+${"```"}
+  
+## License
+  
+${readmeObj.license}
+  
+## Badges
+  
+${readmeObj.badges
+  .map((badge) => {
+    return badge + "\n";
+  })
+  .join("")}
+  
+## Contributing
+${readmeObj.contributing
+  .map((contributer) => {
+    return "[//]: contributor-faces\n" + contributer + "\n";
+  })
+  .join("")}
+  
+## Tests
+${"```"}
+${readmeObj.codeusage
+  .map((use) => {
+    return use.codestep + "\n";
+  })
+  .join("")}
+${"```"}
+  
+`;
 
   fs.writeFile("README.md", readme, (err) => {
     if (err) {
       console.log(err);
     } else {
-      console.log("successful");
+      console.log("README created successfully");
     }
   });
 }
