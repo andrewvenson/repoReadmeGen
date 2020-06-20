@@ -1,6 +1,6 @@
-# Enter Repo Name Here
+# Test
   
-Enter Description Here
+Test 123 description
 
 
 ## Table of Contents
@@ -13,12 +13,14 @@ Enter Description Here
 
 ## Installation
 
+This is how you install
+
 ```bash
-Enter Installation Code Here
+npm install thisishowyouinstall
 ```
 
 ```bash
-Enter Installation Code Here
+npm install thisishowyouinstall
 ```
 
 
@@ -26,19 +28,26 @@ Enter Installation Code Here
 ## Usage
 
 ```
-Enter Usage Code Here
+//This is how you use the application
 
 ```
 
 ## License
 
-Enter License Here
+MIT
 
 ## Badges
+
+<img src="https://img.shields.io/badge/cool-yayy-blue" alt="cool" />
+
+
 
 ## Contributing
 [//]: contributor-faces
 <a href="https://github.com/andrewvenson"><img src="https://avatars0.githubusercontent.com/u/14009158?v=4" title="andrewvenson" width="80" height="80"></a>
+          
+[//]: contributor-faces
+<a href="https://github.com/psunkara"><img src="https://avatars2.githubusercontent.com/u/7216574?v=4" title="psunkara" width="80" height="80"></a>
           
 
 

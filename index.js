@@ -230,7 +230,48 @@ function contrib() {
 }
 
 function badges() {
-  final();
+  inquirer
+    .prompt([
+      {
+        name: "label",
+        type: "input",
+        message: "Badge - Badge Label: ",
+        default: "<Badge Label>",
+      },
+      {
+        name: "message",
+        type: "input",
+        message: "Badge - Badge Message: ",
+        default: "<Badge Message>",
+      },
+      {
+        name: "color",
+        type: "input",
+        message: "Badge - Badge Color: ",
+        default: "<Badge Color>",
+      },
+    ])
+    .then((answers) => {
+      readmeObj.badges.push(
+        `<img src="https://img.shields.io/badge/${answers.label}-${answers.message}-${answers.color}" alt="${answers.label}" />`
+      );
+      inquirer
+        .prompt([
+          {
+            name: "anotherbadge",
+            type: "list",
+            message: "Add another Badge?",
+            choices: ["Yes", "No"],
+          },
+        ])
+        .then((answers) => {
+          if (answers.anotherbadge === "Yes") {
+            badges();
+          } else {
+            tests();
+          }
+        });
+    });
 }
 
 function tests() {
@@ -278,6 +319,13 @@ ${"```"}
 ${readmeObj.license}
 
 ## Badges
+
+${readmeObj.badges
+  .map((badge) => {
+    return badge + "\n";
+  })
+  .join("")}
+
 
 ## Contributing
 ${readmeObj.contributing
