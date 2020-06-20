@@ -1,6 +1,6 @@
-# TestRepo
+# Enter Repo Name Here
   
-This is a test repo description
+Enter Description Here
 
 
 ## Table of Contents
@@ -13,16 +13,12 @@ This is a test repo description
 
 ## Installation
 
-Install octonode
-
 ```bash
-npm install octonode
+Enter Installation Code Here
 ```
 
-Install inquirer
-
 ```bash
-npm install inquirer
+Enter Installation Code Here
 ```
 
 
@@ -30,13 +26,13 @@ npm install inquirer
 ## Usage
 
 ```
-node .
+Enter Usage Code Here
 
 ```
 
 ## License
 
-MIT
+Enter License Here
 
 ## Badges
 

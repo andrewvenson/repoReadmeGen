@@ -64,28 +64,20 @@ function newRepoPrompts() {
         name: "reponame",
         type: "input",
         message: "Repo name: ",
+        default: "Enter Repo Name Here",
       },
       {
         name: "description",
         type: "input",
         message: "Description: ",
-      },
-      {
-        name: "installation",
-        type: "list",
-        message: "Would you like to add installation steps?",
-        choices: ["Yes", "No"],
+        default: "Enter Description Here",
       },
     ])
     .then((answers) => {
       readmeObj.reponame = answers.reponame;
       readmeObj.description = answers.description;
 
-      if (answers.installation === "Yes") {
-        installationSteps();
-      } else {
-        usage();
-      }
+      installationSteps();
     });
 }
 
@@ -95,7 +87,7 @@ function installationSteps() {
       {
         name: "installationstep",
         type: "list",
-        message: "Step type: ",
+        message: "Installation steps = Choose step type: ",
         choices: ["Text", "Code"],
       },
     ])
@@ -107,6 +99,7 @@ function installationSteps() {
               name: "installstep",
               type: "input",
               message: "Enter text: ",
+              default: "Enter Installation Step Here",
             },
             {
               name: "continue",
@@ -116,22 +109,21 @@ function installationSteps() {
             },
           ])
           .then((answer) => {
+            readmeObj.installstep.push({ textstep: answer.installstep });
             if (answer.continue === "Yes") {
-              readmeObj.installstep.push({ textstep: answer.installstep });
               installationSteps();
             } else {
-              readmeObj.installstep.push({ textstep: answer.installstep });
-
               usage();
             }
           });
-      } else {
+      } else if (answers.installationstep === "Code") {
         inquirer
           .prompt([
             {
               name: "codestep",
               type: "input",
               message: "Enter code: ",
+              default: "Enter Installation Code Here",
             },
             {
               name: "continue",
@@ -141,27 +133,12 @@ function installationSteps() {
             },
           ])
           .then((answer) => {
+            readmeObj.installstep.push({ codestep: answer.codestep });
             if (answer.continue === "Yes") {
-              readmeObj.installstep.push({ codestep: answer.codestep });
               installationSteps();
             } else {
               readmeObj.installstep.push({ codestep: answer.codestep });
-              inquirer
-                .prompt([
-                  {
-                    name: "usageconfirm",
-                    message: "Would you like to add Usage?",
-                    type: "list",
-                    choices: ["Yes", "No"],
-                  },
-                ])
-                .then((answers) => {
-                  if (answers.usageconfirm === "Yes") {
-                    usage();
-                  } else {
-                    License();
-                  }
-                });
+              usage();
             }
           });
       }
@@ -174,7 +151,8 @@ function usage() {
       {
         name: "codeline",
         type: "input",
-        message: "Enter code: ",
+        message: "Enter Usage code: ",
+        default: "Enter Usage Code Here",
       },
       {
         name: "continue",
@@ -201,21 +179,12 @@ function license() {
         name: "license",
         message: "Enter License: ",
         type: "input",
-      },
-      {
-        name: "contrib",
-        message: "Would you like to add any contributers?",
-        type: "list",
-        choices: ["Yes", "No"],
+        default: "Enter License Here",
       },
     ])
     .then((answers) => {
       readmeObj.license = answers.license;
-      if (answers.contrib === "Yes") {
-        contrib();
-      } else {
-        badges();
-      }
+      contrib();
     });
 }
 
@@ -226,12 +195,7 @@ function contrib() {
         name: "contrib",
         type: "input",
         message: "Contributer - Github username: ",
-      },
-      {
-        name: "contribagain",
-        type: "list",
-        message: "Add another contributer?",
-        choices: ["Yes", "No"],
+        default: gitClient.token.username,
       },
     ])
     .then((answers) => {
@@ -244,28 +208,24 @@ function contrib() {
           readmeObj.contributing
             .push(`<a href="https://github.com/${answers.contrib}"><img src="${data.avatar_url}" title="${answers.contrib}" width="80" height="80"></a>
           `);
+          inquirer
+            .prompt([
+              {
+                name: "contribagain",
+                type: "list",
+                message: "Add another contributer?",
+                choices: ["Yes", "No"],
+              },
+            ])
+            .then((answers) => {
+              if (answers.contribagain === "Yes") {
+                contrib();
+              } else {
+                badges();
+              }
+            });
         }
       });
-      if (answers.contribagain === "Yes") {
-        contrib();
-      } else {
-        inquirer
-          .prompt([
-            {
-              name: "badges",
-              type: "list",
-              message: "Would you like to add any badges?",
-              choices: ["Yes", "No"],
-            },
-          ])
-          .then((answers) => {
-            if (answers.badge === "Yes") {
-              badges();
-            } else {
-              tests();
-            }
-          });
-      }
     });
 }
 
