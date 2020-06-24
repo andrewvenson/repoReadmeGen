@@ -7,6 +7,7 @@ Cli application that enables the ability to generate a README.md depending on th
 - [Installation](#installation)
 - [Usage](#usage)
 - [License](#license)
+- [Badges](#badges)
 - [Contributing](#contributing)
 - [Tests](#tests)
 - [Questions](#questions)
