@@ -12,6 +12,7 @@ var readmeObj = {
   license: "",
   codeusage: [],
   tests: [],
+  email: "",
   badges: [],
 };
 
@@ -289,7 +290,18 @@ function tests() {
       if (answer.continue === "Yes") {
         tests();
       } else {
-        final();
+        inquirer
+          .prompt([
+            {
+              name: "email",
+              type: "input",
+              message: "Enter email address for contact method:",
+            },
+          ])
+          .then((answer) => {
+            readmeObj.email = answer.email;
+            final();
+          });
       }
     });
 }
@@ -326,6 +338,7 @@ function final() {
               readmeObj.license = "";
               readmeObj.tests = [];
               readmeObj.badges = [];
+              readmeObj.email = "";
               readmeObj.contributing = [];
               readmeObj.codeusage = [];
               newRepoPrompts();
@@ -371,6 +384,7 @@ ${readmeObj.description}
 - [License](#license)
 - [Contributing](#contributing)
 - [Tests](#tests)
+- [Questions](#questions)
   
 ## Installation
   
@@ -422,6 +436,11 @@ ${readmeObj.tests
   .join("")}
 ${"```"}
   
+## Questions
+
+If you have any questions about the repo, open an issue or contact directly @ ${
+    readmeObj.email
+  }
 `;
 
   fs.writeFile("README.md", readme, (err) => {

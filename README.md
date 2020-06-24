@@ -1,6 +1,6 @@
 # repoReadmeGen
 
-Cli application that enables the ability to generate a README.md depending on the information you feed it; Along with the option of creating a repository with README.md attached.
+Cli application that enables the ability to generate a README.md depending on the information you feed it; Along with the option of creating a repository with generated README.md attached.
 
 ## Table of Contents
 
@@ -9,12 +9,11 @@ Cli application that enables the ability to generate a README.md depending on th
 - [License](#license)
 - [Contributing](#contributing)
 - [Tests](#tests)
+- [Questions](#questions)
 
 ## Installation
 
-Clone application and then:
-
-Install octonode dependency
+Clone application & then install octonode dependency
 
 ```bash
 npm install octonode
@@ -29,7 +28,7 @@ npm install inquirer
 ## Usage
 
 ```
-// run node to enter cli environment
+// run node in project directory to enter cli environment
 node index.js
 
 ```
@@ -41,7 +40,7 @@ osl-3.0
 ## Badges
 
 <img src="https://img.shields.io/badge/cool-codemonk9-green" alt="cool" />
-<img src="https://img.shields.io/badge/cool-repoReadmeGen-blue" alt="cool" />
+<img src="https://img.shields.io/badge/wow-repoReadmeGen-blue" alt="wow" />
 
 ## Contributing
 
@@ -55,3 +54,7 @@ osl-3.0
 // no test code for this repo
 
 ```
+
+## Questions
+
+If you have any questions about the repo, open an issue or contact directly @ vensoneandrew@gmail.com
